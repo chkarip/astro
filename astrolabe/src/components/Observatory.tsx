@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { openUrl } from "@tauri-apps/plugin-opener";
 import { useDatabase } from "../hooks/useDatabase";
 import type { ProfileRecord } from "../types";
 
@@ -439,27 +440,49 @@ export function Observatory({ onEnterProfile }: ObservatoryProps) {
             </p>
           </div>
 
-          <button
-            onClick={() => setShowCreate(true)}
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: 11,
-              fontWeight: 700,
-              letterSpacing: "0.1em",
-              padding: "10px 22px",
-              background: "rgba(245,166,35,0.12)",
-              border: "1.5px solid #f5a623",
-              borderRadius: 6,
-              color: "#f5a623",
-              cursor: "pointer",
-              transition: "background 0.15s",
-              flexShrink: 0,
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(245,166,35,0.22)")}
-            onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(245,166,35,0.12)")}
-          >
-            + NEW PROFILE
-          </button>
+          <div style={{ display: "flex", gap: 10, flexShrink: 0 }}>
+            <button
+              onClick={() => openUrl("ergon://").catch(() => {})}
+              title="Bring Ergon to the front"
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: "0.1em",
+                padding: "10px 18px",
+                background: "rgba(74,158,255,0.12)",
+                border: "1.5px solid #4A9EFF",
+                borderRadius: 6,
+                color: "#4A9EFF",
+                cursor: "pointer",
+                transition: "background 0.15s",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(74,158,255,0.22)")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(74,158,255,0.12)")}
+            >
+              🚀 ERGON
+            </button>
+            <button
+              onClick={() => setShowCreate(true)}
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: "0.1em",
+                padding: "10px 22px",
+                background: "rgba(245,166,35,0.12)",
+                border: "1.5px solid #f5a623",
+                borderRadius: 6,
+                color: "#f5a623",
+                cursor: "pointer",
+                transition: "background 0.15s",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(245,166,35,0.22)")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(245,166,35,0.12)")}
+            >
+              + NEW PROFILE
+            </button>
+          </div>
         </div>
       </div>
 

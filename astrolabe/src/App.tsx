@@ -25,6 +25,7 @@ import {
   type EdgeChange,
 } from "@xyflow/react";
 import { invoke } from "@tauri-apps/api/core";
+import { openUrl } from "@tauri-apps/plugin-opener";
 import "@xyflow/react/dist/style.css";
 
 import { IndexCardNode, GoldenNode, NoteNode, MilestoneNode, TaskNode } from "./components/nodes";
@@ -1515,6 +1516,28 @@ function AstrolabeCanvas({ profileId, profileName, onBack }: CanvasProps) {
             >
               ← Observatory
             </button>
+            <button
+              onClick={() => openUrl("ergon://").catch(() => {})}
+              title="Bring Ergon to the front"
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: "0.06em",
+                padding: "6px 12px",
+                background: "rgba(13,27,46,0.85)",
+                border: "1px solid #1e3a5f",
+                borderRadius: 4,
+                color: "#4A9EFF",
+                cursor: "pointer",
+                transition: "all 0.15s",
+                backdropFilter: "blur(4px)",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#4A9EFF")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#1e3a5f")}
+            >
+              🚀 Ergon
+            </button>
             <div style={{
               fontFamily: "var(--font-mono)",
               fontSize: 10,
@@ -1634,8 +1657,45 @@ function fallbackSuggestions(): AISuggestion[] {
 
 // ─── Root App — manages which profile is active ───────────────────────────────
 
+interface ErgonHandoff {
+  name: string;
+  path: string;
+  astroProject?: string;
+  createNew?: boolean;
+  timestamp: number;
+}
+
 export default function App() {
   const [activeProfile, setActiveProfile] = useState<{ id: string; name: string } | null>(null);
+  const db = useDatabase();
+
+  // Consume a pending Ergon → Astrolabe handoff (written when the user clicks
+  // the 🔭 button on a project card in Ergon) and jump straight into the
+  // linked profile, or create one if this is the first handoff for it.
+  useEffect(() => {
+    (async () => {
+      const handoff = await invoke<ErgonHandoff | null>("take_pending_handoff").catch(() => null);
+      if (!handoff) return;
+
+      const profiles = await db.getAllProfiles();
+      const wanted = handoff.astroProject?.trim().toLowerCase();
+      let target = wanted
+        ? profiles.find((p) => p.name.trim().toLowerCase() === wanted)
+        : undefined;
+
+      if (!target) {
+        target = await db.createProfile({
+          id: crypto.randomUUID(),
+          name: handoff.astroProject || handoff.name,
+          description: `Created from Ergon project "${handoff.name}" (${handoff.path})`,
+          color: "#4A9EFF",
+        }) ?? undefined;
+      }
+
+      if (target) setActiveProfile({ id: target.id, name: target.name });
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!activeProfile) {
     return (

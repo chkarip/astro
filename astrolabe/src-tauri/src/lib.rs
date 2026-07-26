@@ -1,5 +1,6 @@
-mod db;
 mod ai;
+mod db;
+mod handoff;
 
 use db::DbState;
 use rusqlite::Connection;
@@ -56,6 +57,8 @@ pub fn run() {
             ai::cluster_ideas,
             ai::ask_oracle,
             ai::build_from_prompt,
+            // Ergon handoff
+            handoff::take_pending_handoff,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
