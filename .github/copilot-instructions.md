@@ -6,15 +6,12 @@ Astrolabe is a **local-first, AI-augmented life-mapping and project-orchestratio
 Stack: **Tauri v2 (Rust)** + **React 18 / Vite / TypeScript** + **Ollama** (local AI) + **SQLite** (rusqlite).
 Canvas engine: `@xyflow/react` (React Flow v12). Animations: Framer Motion. Styling: Tailwind CSS v4.
 
-See `astrolabe-architecture.md` for the full reference document.
-
 ---
 
 ## Repository Layout
 
 ```
 d:\Astrolabe\
-├── astrolabe-architecture.md   ← always-up-to-date architecture reference
 └── astrolabe/                  ← the app
     ├── src/                    ← React + TypeScript frontend
     │   ├── App.tsx             ← canvas root + AstrolabeCanvas component
@@ -60,7 +57,7 @@ d:\Astrolabe\
 
 ### Styling
 
-- All colours follow the **Academic Blueprint** palette (deep navy `#0d1b2e`, blueprint blue `#1e3a5f`, off-white `#ccd6f6`, amber `#f5a623`). See `astrolabe-architecture.md`.
+- All colours follow the **Academic Blueprint** palette (deep navy `#0d1b2e`, blueprint blue `#1e3a5f`, off-white `#ccd6f6`, amber `#f5a623`).
 - Use inline `style` objects for component-specific one-off styles. Use Tailwind utility classes for layout/positioning when appropriate.
 - Framer Motion `motion.div` with `type: "spring"` for interactive elements; CSS transitions for bulk node position animations (layout tidy).
 
@@ -143,7 +140,6 @@ invoke('build_from_prompt',   { prompt, context, profileId }) → BuildPlan
 5. Add a `case` to `nodeToRecord()` in `src/utils/nodeSerializer.ts`
 6. Add to the `node_type` literal union in `src/types/index.ts`
 7. Update `ASTROLABE_SYSTEM_KNOWLEDGE` in `src-tauri/src/ai.rs`
-8. Update `astrolabe-architecture.md`
 
 ### Adding a new Tauri command
 1. Write the `#[tauri::command]` fn in `db.rs` or `ai.rs`
